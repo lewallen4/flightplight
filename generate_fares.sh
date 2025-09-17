@@ -6,7 +6,6 @@ set -euo pipefail
 OUTFILE="index.html"
 
 # --- STEP 1: Airport data (sample subset of Alaska Airlines airports) ---
-# You can extend this list or pull from a live source later
 cat > airports.json <<'JSON'
 [
   {"code": "SEA", "name": "Seattle-Tacoma Intl", "state": "WA", "lat": 47.4502, "lon": -122.3088, "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Seattle-Tacoma_International_Airport_from_the_air.jpg/320px-Seattle-Tacoma_International_Airport_from_the_air.jpg"},
@@ -17,10 +16,34 @@ cat > airports.json <<'JSON'
 ]
 JSON
 
-# --- STEP 2: Generate fake fare data ---
-# We'll make a JSON structure with fares for each airport for 12 months
-# Each month has a "best fare"
-jq -c 'map(. + {fares: [range(1;13) | {month: ., fare: (200 + (100*rand|floor))}]})' airports.json > fares.json
+# --- STEP 2: Generate fake fare data in Bash ---
+echo "[" > fares.json
+first=1
+jq -c '.[]' airports.json | while read -r ap; do
+  code=$(jq -r '.code' <<<"$ap")
+  name=$(jq -r '.name' <<<"$ap")
+  state=$(jq -r '.state' <<<"$ap")
+  lat=$(jq -r '.lat' <<<"$ap")
+  lon=$(jq -r '.lon' <<<"$ap")
+  image=$(jq -r '.image' <<<"$ap")
+
+  # generate 12 months of fares (random 200–500)
+  fares="["
+  for m in $(seq 1 12); do
+    price=$(shuf -i 200-500 -n 1)
+    fares+="{\"month\":$m,\"fare\":$price},"
+  done
+  fares="${fares%,}]"
+
+  entry="{\"code\":\"$code\",\"name\":\"$name\",\"state\":\"$state\",\"lat\":$lat,\"lon\":$lon,\"image\":\"$image\",\"fares\":$fares}"
+  if [ $first -eq 1 ]; then
+    echo "$entry" >> fares.json
+    first=0
+  else
+    echo ",$entry" >> fares.json
+  fi
+done
+echo "]" >> fares.json
 
 # --- STEP 3: Build HTML ---
 cat > "$OUTFILE" <<'HTML_HEAD'
