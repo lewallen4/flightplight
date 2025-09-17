@@ -130,7 +130,7 @@ cat >> "$OUTFILE" <<'HTML_FOOT'
       const popupHtml = `
         <b>${title}</b><br/>
         <table>
-          <tr><td>Country:</td><td>${f.origin_country||'N/A'}</td></tr>
+          <tr><td>Origin Country:</td><td>${f.origin_country||'N/A'}</td></tr>
           <tr><td>Altitude (m):</td><td>${fmt(f.baro_altitude,1)}</td></tr>
           <tr><td>Speed (m/s):</td><td>${fmt(f.velocity,1)}</td></tr>
           <tr><td>Heading:</td><td>${fmt(f.heading,1)}</td></tr>
