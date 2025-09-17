@@ -1,9 +1,9 @@
-name: Alaska Fare Map
+name: Alaska Fare Map Interactive
 
 on:
   workflow_dispatch:
   #schedule:
-    #- cron: "0 6 * * *" # every day at 6am UTC
+    #- cron: "0 6 * * *"
 
 permissions:
   contents: write
@@ -14,23 +14,27 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repo
+      - name: Checkout
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Install dependencies
+      - name: Set up environment
         run: sudo apt-get update && sudo apt-get install -y jq curl
 
-      - name: Generate Fare Map
-        run: bash generate_fares.sh
+      - name: Generate Fare Map Interactive
+        env:
+          API_NINJAS_KEY: ${{ secrets.API_NINJAS_KEY }}   # for airport metadata
+        run: |
+          chmod +x generate_fares_full.sh
+          bash ./generate_fares_full.sh
 
       - name: Commit & Push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add index.html
-          git commit -m "Update fare map [skip ci]" || echo "No changes"
+          git commit -m "Update interactive fare map [skip ci]" || echo "No changes"
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
