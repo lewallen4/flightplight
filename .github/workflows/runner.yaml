@@ -16,7 +16,7 @@ jobs:
         run: sudo apt-get install -y jq curl
 
       - name: Generate Flight Map
-        run: sudo ./generate_flights.sh
+        run: sudo bash generate_flights.sh
 
       - name: Commit & Push
         run: |
