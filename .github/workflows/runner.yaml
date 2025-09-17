@@ -6,7 +6,9 @@ on:
     #- cron: "0 * * * *" # every hour
 
 permissions:
-  contents: write   # <--- allow pushing changes back
+  contents: write      # allow committing
+  pages: write         # allow deploying to GitHub Pages
+  id-token: write      # required by deploy-pages
 
 jobs:
   build:
@@ -14,17 +16,33 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false   # we'll commit with GITHUB_TOKEN manually
 
-      - name: Install jq
-        run: sudo apt-get install -y jq curl
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y jq curl
 
       - name: Generate Flight Map
-        run: sudo bash generate_flights.sh
+        run: sudo bash ./generate_flights.sh
 
-      - name: Commit & Push
+      - name: Commit & Push (for repo history)
         run: |
-          sudo git config --global user.name "github-actions"
-          sudo git config --global user.email "github-actions@github.com"
+          sudo git config --global user.name "github-actions[bot]"
+          sudo git config --global user.email "github-actions[bot]@users.noreply.github.com"
           sudo git add index.html
-          sudo git commit -m "Update flight map"
+          sudo git commit -m "Update flight map [skip ci]" || echo "No changes to commit"
           sudo git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .   # root of repo, so index.html is included
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
