@@ -16,12 +16,12 @@ jobs:
         run: sudo apt-get install -y jq curl
 
       - name: Generate Flight Map
-        run: ./generate_flights.sh
+        run: sudo ./generate_flights.sh
 
       - name: Commit & Push
         run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "github-actions@github.com"
-          git add index.html
-          git commit -m "Update flight map"
-          git push
+          sudo git config --global user.name "github-actions"
+          sudo git config --global user.email "github-actions@github.com"
+          sudo git add index.html
+          sudo git commit -m "Update flight map"
+          sudo git push
