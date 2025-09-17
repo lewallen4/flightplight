@@ -17,28 +17,28 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
         with:
-          persist-credentials: false   # we'll commit with GITHUB_TOKEN manually
+          token: ${{ secrets.GITHUB_TOKEN }}   # ensures push works
 
       - name: Install dependencies
         run: sudo apt-get update && sudo apt-get install -y jq curl
 
       - name: Generate Flight Map
-        run: sudo bash ./generate_flights.sh
+        run: bash ./generate_flights.sh
 
       - name: Commit & Push (for repo history)
         run: |
-          sudo git config --global user.name "github-actions[bot]"
-          sudo git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          sudo git add index.html
-          sudo git commit -m "Update flight map [skip ci]" || echo "No changes to commit"
-          sudo git push
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Update flight map [skip ci]" || echo "No changes to commit"
+          git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: .   # root of repo, so index.html is included
+          path: .   # include repo root, index.html must be here
 
   deploy:
     runs-on: ubuntu-latest
