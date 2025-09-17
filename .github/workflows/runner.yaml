@@ -1,0 +1,27 @@
+name: Flight Tracker
+
+on:
+  workflow_dispatch:   # manual trigger
+  schedule:
+    - cron: "0 * * * *" # every hour
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Install jq
+        run: sudo apt-get install -y jq curl
+
+      - name: Generate Flight Map
+        run: ./generate_flights.sh
+
+      - name: Commit & Push
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git add index.html
+          git commit -m "Update flight map"
+          git push
