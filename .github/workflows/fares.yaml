@@ -2,8 +2,8 @@ name: Alaska Fare Map
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "0 6 * * *" # every day at 6am UTC
+  #schedule:
+    #- cron: "0 6 * * *" # every day at 6am UTC
 
 permissions:
   contents: write
