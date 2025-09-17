@@ -23,7 +23,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y jq curl
 
       - name: Generate Fare Map
-        run: ./generate_fares.sh
+        run: bash generate_fares.sh
 
       - name: Commit & Push
         run: |
