@@ -26,8 +26,8 @@ jobs:
         env:
           API_NINJAS_KEY: ${{ secrets.API_NINJAS_KEY }}   # for airport metadata
         run: |
-          chmod +x generate_fares_full.sh
-          bash ./generate_fares_full.sh
+          chmod +x generate_fares.sh
+          bash ./generate_fares.sh
 
       - name: Commit & Push
         run: |
