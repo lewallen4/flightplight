@@ -2,8 +2,8 @@ name: Flight Tracker
 
 on:
   workflow_dispatch:   # manual trigger
-  schedule:
-    - cron: "0 * * * *" # every hour
+  #schedule:
+    #- cron: "0 * * * *" # every hour
 
 permissions:
   contents: write   # <--- allow pushing changes back
