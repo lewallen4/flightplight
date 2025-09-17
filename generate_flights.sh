@@ -75,7 +75,7 @@ cat > "$OUTFILE" <<'HTML_HEAD'
     #map { height:100vh; width:100%; }
     .leaflet-popup-content { font-family: monospace; font-size: 13px; }
     .topbar {
-      position: absolute; left:12px; top:12px; z-index:1000;
+      position: absolute; left:36px; top:12px; z-index:1000;
       background: rgba(255,255,255,0.9); padding:8px 10px; border-radius:6px;
       box-shadow: 0 1px 4px rgba(0,0,0,0.2); font-family: Arial, sans-serif;
     }
